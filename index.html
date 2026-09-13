@@ -17,8 +17,11 @@
     --gem-rgb:   90,240,245;
     --gem-glow:  rgba(90,240,245,0.15);
     --gem-glow2: rgba(90,240,245,0.06);
-    --bar-light: #c8eef0;
-    --bar-dark:  #0a1a1c;
+    --bar-light: color-mix(in srgb, var(--gem) 65%, white);
+    --bar-dark:  color-mix(in srgb, var(--gem) 18%, black);
+    --surf-1:    color-mix(in srgb, var(--gem) 4%, #010102);
+    --surf-2:    color-mix(in srgb, var(--gem) 8%, #010102);
+    --surf-3:    color-mix(in srgb, var(--gem) 15%, #010102);
     --accent:    #a0f0c8;   /* soft mint for variety */
     --accent2:   #c8b8ff;   /* soft purple for variety */
   }
@@ -70,7 +73,7 @@
     opacity: 0; transition: opacity 0.15s;
   }
   .l-titlebar.show { opacity: 1; }
-  .l-titlebar .gem-accent { color: #007880; margin-right: 0.45em; }
+  .l-titlebar .gem-accent { color: var(--gem-mid); margin-right: 0.45em; }
   .l-titlebar .jp { margin-left: 2em; opacity: 0; transition: opacity 0.15s; }
   .l-titlebar .jp.show { opacity: 1; }
 
@@ -84,7 +87,7 @@
   .l-progress-row .label { white-space: nowrap; margin-right: 0.8em; color: var(--fg-bright); }
   .l-bar-outer {
     flex: 1; max-width: 36em; height: 1.15em;
-    border: 1px solid var(--gem-dim); background: #020a0b;
+    border: 1px solid var(--gem-dim); background: var(--surf-1);
     overflow: hidden; position: relative;
     box-shadow: 0 0 8px var(--gem-glow);
   }
@@ -173,7 +176,7 @@
     position: relative; z-index: 1;
     width: min(90vw, 340px);
     border: 1px solid var(--gem-dim);
-    background: #020a0b;
+    background: var(--surf-1);
     box-shadow: 0 0 24px var(--gem-glow);
     padding: 2em 2em 1.6em;
     display: flex; flex-direction: column;
@@ -227,7 +230,7 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 2em; height: 50px;
     border-bottom: 1px solid var(--gem-dim);
-    background: #020c0d; flex-shrink: 0;
+    background: var(--surf-1); flex-shrink: 0;
     position: relative; z-index: 10;
   }
   .h-logo {
@@ -287,6 +290,21 @@
     50%{ transform: translateY(-12px) rotate(180deg); opacity:0.6; }
   }
 
+  /* rising ambient particles — reused on every screen */
+  .h-motes { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .h-motes span {
+    position: absolute; bottom: -8%; width: 4px; height: 4px;
+    background: var(--gem); opacity: 0; transform: rotate(45deg);
+    box-shadow: 0 0 6px var(--gem);
+    animation: moteRise linear infinite;
+  }
+  @keyframes moteRise {
+    0%   { transform: translateY(0) rotate(45deg); opacity: 0; }
+    10%  { opacity: 0.5; }
+    88%  { opacity: 0.22; }
+    100% { transform: translateY(-118vh) rotate(45deg); opacity: 0; }
+  }
+
   /* center title area */
   .h-center { display: flex; flex-direction: column; align-items: center; gap: 2em; z-index: 2; }
 
@@ -316,7 +334,7 @@
   .h-card {
     width: 150px; height: 140px;
     border: 1px solid var(--gem-dim);
-    background: linear-gradient(135deg, #020f10 0%, #041820 100%);
+    background: linear-gradient(135deg, var(--surf-1) 0%, var(--surf-2) 100%);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 0.55em;
     cursor: pointer; position: relative; overflow: hidden;
@@ -362,6 +380,8 @@
   .h-card.c-purple .card-icon { color: var(--accent2); }
   .h-card.c-gold  { --card-accent: #f0d080; }
   .h-card.c-gold .card-icon { color: #f0d080; }
+  .h-card.c-rose  { --card-accent: #ff9ec0; }
+  .h-card.c-rose .card-icon { color: #ff9ec0; }
 
   /* status dots under cards */
   .h-status-row {
@@ -373,12 +393,13 @@
   @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
 
   /* ── PANEL view ── */
-  .h-panel-view { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+  .h-panel-view { flex: 1; display: none; flex-direction: column; overflow: hidden; position: relative; }
   .h-panel-view.active { display: flex; }
 
   .h-panel-bar {
     display: flex; align-items: center; gap: 1em; padding: 0.75em 2em;
-    border-bottom: 1px solid #0e2225; background: #010809; flex-shrink: 0;
+    border-bottom: 1px solid var(--gem-dim); background: var(--surf-1); flex-shrink: 0;
+    position: relative; z-index: 1;
   }
   .h-back-btn {
     background: none; border: 1px solid var(--gem-dim); color: var(--gem-dim);
@@ -391,7 +412,8 @@
 
   .h-panel-content {
     flex: 1; overflow-y: auto; padding: 1.8em 2em;
-    scrollbar-width: thin; scrollbar-color: var(--gem-dim) #020a0b;
+    scrollbar-width: thin; scrollbar-color: var(--gem-dim) var(--surf-1);
+    position: relative; z-index: 1;
   }
 
   .links-list { display: flex; flex-direction: column; gap: 0.5em; max-width: 700px; }
@@ -399,10 +421,10 @@
   .links-columns .links-list { flex: 1 1 320px; max-width: 480px; }
   .link-row {
     display: flex; align-items: center; gap: 1em; padding: 0.7em 1em;
-    border: 1px solid #0e2225; background: #020d0e;
+    border: 1px solid var(--gem-dim); background: var(--surf-1);
     text-decoration: none; transition: border-color 0.15s, background 0.15s;
   }
-  .link-row:hover { border-color: var(--gem-dim); background: #041518; }
+  .link-row:hover { border-color: var(--gem-dim); background: var(--surf-2); }
   .link-row .ld { color: var(--gem); font-size: 10px; text-shadow: 0 0 6px var(--gem); flex-shrink: 0; }
   .link-row .ln { font-size: 14px; font-weight: bold; color: var(--fg-bright); flex: 1; }
   .link-row .lu { font-size: 11px; color: var(--fg-dim); font-style: italic; }
@@ -418,7 +440,7 @@
   /* calculator */
   .calc-wrap { max-width: 320px; }
   .calc-display {
-    background: #020a0b; border: 1px solid var(--gem-dim);
+    background: var(--surf-1); border: 1px solid var(--gem-dim);
     color: var(--fg-bright); font-size: 28px; font-weight: bold;
     text-align: right; padding: 0.5em 0.6em; margin-bottom: 0.6em;
     letter-spacing: 0.5px; box-shadow: 0 0 10px var(--gem-glow) inset;
@@ -426,11 +448,11 @@
   }
   .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .calc-btn {
-    background: #061618; border: 1px solid var(--gem-dim); color: var(--fg);
+    background: var(--surf-2); border: 1px solid var(--gem-dim); color: var(--fg);
     font-family: inherit; font-size: 16px; font-weight: bold; padding: 0.7em 0;
     cursor: pointer; transition: border-color 0.12s, color 0.12s, background 0.12s;
   }
-  .calc-btn:hover { border-color: var(--gem); color: var(--gem); background: #0a2224; }
+  .calc-btn:hover { border-color: var(--gem); color: var(--gem); background: var(--surf-3); }
   .calc-btn.op { color: var(--gem); }
   .calc-btn.wide { grid-column: span 2; }
   .calc-btn.eq { background: var(--gem-dim); color: #001416; }
@@ -440,7 +462,7 @@
   .ascii-wrap { max-width: 100%; }
   .ascii-row { display: flex; gap: 8px; margin-bottom: 1em; }
   .ascii-row input {
-    flex: 1; background: #020a0b; border: 1px solid var(--gem-dim); color: var(--fg-bright);
+    flex: 1; background: var(--surf-1); border: 1px solid var(--gem-dim); color: var(--fg-bright);
     font-family: inherit; font-size: 14px; padding: 0.55em 0.7em;
   }
   .ascii-row input:focus { outline: none; border-color: var(--gem); }
@@ -451,7 +473,7 @@
   }
   .ascii-row button:hover, .html-run:hover { background: var(--gem); border-color: var(--gem); }
   .ascii-output {
-    background: #020a0b; border: 1px solid var(--gem-dim); color: var(--gem);
+    background: var(--surf-1); border: 1px solid var(--gem-dim); color: var(--gem);
     font-size: 10px; line-height: 1.15; padding: 1em; overflow-x: auto;
     min-height: 3em; text-shadow: 0 0 8px var(--gem-glow);
   }
@@ -460,7 +482,7 @@
   .html-tester { display: flex; flex-direction: column; gap: 0.8em; max-width: 100%; }
   .html-tester textarea {
     width: 100%; height: 160px; resize: vertical;
-    background: #020a0b; border: 1px solid var(--gem-dim); color: var(--fg-bright);
+    background: var(--surf-1); border: 1px solid var(--gem-dim); color: var(--fg-bright);
     font-family: inherit; font-size: 13px; line-height: 1.5; padding: 0.8em;
   }
   .html-tester textarea:focus { outline: none; border-color: var(--gem); }
@@ -493,7 +515,7 @@
   .switch input { opacity: 0; width: 0; height: 0; }
   .switch-slider {
     position: absolute; inset: 0; cursor: pointer;
-    background: #0c1a1c; border: 1px solid var(--gem-dim); transition: 0.2s;
+    background: var(--surf-2); border: 1px solid var(--gem-dim); transition: 0.2s;
   }
   .switch-slider::before {
     content: ""; position: absolute; height: 12px; width: 12px; left: 2px; top: 2px;
@@ -503,6 +525,35 @@
   .switch input:checked + .switch-slider::before {
     transform: translateX(18px); background: var(--gem); box-shadow: 0 0 6px var(--gem);
   }
+
+  /* ── chatroom ── */
+  .chat-messages {
+    flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5em;
+    padding-bottom: 1em; scrollbar-width: thin; scrollbar-color: var(--gem-dim) var(--surf-1);
+  }
+  .chat-msg { max-width: 75%; }
+  .chat-msg .chat-meta {
+    font-size: 10px; color: var(--fg-dim); letter-spacing: 0.4px; margin-bottom: 0.2em;
+  }
+  .chat-msg .chat-meta .chat-user { color: var(--gem); font-weight: bold; }
+  .chat-msg .chat-bubble {
+    background: var(--surf-2); border: 1px solid var(--gem-dim);
+    padding: 0.5em 0.8em; font-size: 13px; color: var(--fg); line-height: 1.45;
+    word-break: break-word; white-space: pre-wrap;
+  }
+  .chat-msg.own { align-self: flex-end; }
+  .chat-msg.own .chat-bubble { background: var(--surf-3); border-color: var(--gem); }
+  .chat-msg.own .chat-meta { text-align: right; }
+  .chat-system {
+    align-self: center; font-size: 11px; color: var(--fg-dim); font-style: italic;
+    padding: 0.3em 0; opacity: 0.8;
+  }
+  .chat-input-row { display: flex; gap: 0.7em; flex-shrink: 0; }
+  .chat-input {
+    flex: 1; background: var(--surf-1); border: 1px solid var(--gem-dim); color: var(--fg-bright);
+    font-family: inherit; font-size: 13px; padding: 0.6em 0.8em;
+  }
+  .chat-input:focus { outline: none; border-color: var(--gem); }
 
   /* ══════════════════════════════════════
      CUSTOM CURSOR
@@ -516,7 +567,7 @@
   html, body, #loader, #hub, #loginScreen, .h-card, .link-row, .h-back-btn, .guide-back, a, .theme-swatch, .switch, .switch-slider {
     cursor: none !important;
   }
-  .login-input { cursor: text !important; }
+  .login-input, .chat-input { cursor: text !important; }
   @media (hover: none) and (pointer: coarse) {
     html, body, #loader, #hub, #loginScreen, .h-card, .link-row, .h-back-btn, .guide-back, a {
       cursor: auto !important;
@@ -567,6 +618,9 @@
     100% { opacity: 0; transform: translate(-50%,-50%) scale(0.2); }
   }
 </style>
+<!-- Firebase (used only by the Chatroom panel) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -575,6 +629,21 @@
 
 <!-- ══════ LOGIN ══════ -->
 <div id="loginScreen">
+<div class="h-bg-grid"></div>
+<div class="h-deco" style="top:15%;left:10%;animation-delay:0.5s;">◆</div>
+<div class="h-deco" style="bottom:18%;right:12%;animation-delay:2.5s;font-size:9px;">◆</div>
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
   <div class="login-box">
     <div class="login-title">◆ DIAMONDHUB ACCESS</div>
     <div class="login-sub">Authorization required to continue.</div>
@@ -592,6 +661,21 @@
 
 <!-- ══════ LOADER ══════ -->
 <div id="loader" style="display:none;">
+<div class="h-bg-grid"></div>
+<div class="h-deco" style="top:12%;right:15%;animation-delay:1s;font-size:9px;">◆</div>
+<div class="h-deco" style="bottom:15%;left:14%;animation-delay:3.2s;">◆</div>
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
   <div class="l-stage">
     <div class="l-titlebar" id="ltitlebar">
       <span class="gem-accent">◆</span>
@@ -647,6 +731,18 @@
 
   <!-- HOME -->
   <div class="h-home" id="hHome">
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
     <div class="h-bg-grid"></div>
 
     <!-- floating deco diamonds -->
@@ -693,17 +789,38 @@
           <div class="card-label">SETTINGS</div>
           <div class="card-sub">Theme, cursor &amp; more</div>
         </div>
+
+        <div class="h-card live c-rose" onclick="openPanel('chat')">
+          <div class="card-icon">💬</div>
+          <div class="card-label">CHATROOM</div>
+          <div class="card-sub">Talk with whoever's logged in</div>
+        </div>
       </div>
 
       <div class="h-status-row">
         <div class="status-dot"></div>
-        SYSTEM ONLINE — 4 SECTIONS ACTIVE
+        SYSTEM ONLINE — 5 SECTIONS ACTIVE
       </div>
     </div>
   </div>
 
   <!-- PROXIES PANEL -->
   <div class="h-panel-view" id="panel-proxies">
+  <div class="h-bg-grid"></div>
+  <div class="h-deco" style="top:10%;right:8%;animation-delay:0.6s;font-size:9px;">◆</div>
+  <div class="h-deco" style="bottom:10%;left:6%;animation-delay:2.8s;">◆</div>
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
     <div class="h-panel-bar">
       <button class="h-back-btn" onclick="goHome()">← BACK</button>
       <span class="h-panel-title">◆ PROXIES</span>
@@ -936,6 +1053,21 @@
 
   <!-- TOOLS PANEL -->
   <div class="h-panel-view" id="panel-tools">
+  <div class="h-bg-grid"></div>
+  <div class="h-deco" style="top:14%;left:9%;animation-delay:1.4s;">◆</div>
+  <div class="h-deco" style="bottom:12%;right:10%;animation-delay:3.6s;font-size:8px;">◆</div>
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
     <div class="h-panel-bar">
       <button class="h-back-btn" onclick="goHome()">← BACK</button>
       <span class="h-panel-title">◆ TOOLS</span>
@@ -1053,6 +1185,21 @@
 
   <!-- SETTINGS PANEL -->
   <div class="h-panel-view" id="panel-settings">
+  <div class="h-bg-grid"></div>
+  <div class="h-deco" style="top:16%;right:12%;animation-delay:0.9s;font-size:10px;">◆</div>
+  <div class="h-deco" style="bottom:14%;left:8%;animation-delay:2.1s;">◆</div>
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
     <div class="h-panel-bar">
       <button class="h-back-btn" onclick="goHome()">← BACK</button>
       <span class="h-panel-title">◆ SETTINGS</span>
@@ -1077,14 +1224,14 @@
         <div class="settings-toggle-row">
           <span>Custom cursor</span>
           <label class="switch">
-            <input type="checkbox" id="toggleCursor" checked onchange="toggleCursorSetting(this.checked)">
+            <input type="checkbox" id="toggleCursor" checked autocomplete="off" onchange="toggleCursorSetting(this.checked)">
             <span class="switch-slider"></span>
           </label>
         </div>
         <div class="settings-toggle-row">
           <span>Particle trail</span>
           <label class="switch">
-            <input type="checkbox" id="toggleTrail" checked onchange="toggleTrailSetting(this.checked)">
+            <input type="checkbox" id="toggleTrail" checked autocomplete="off" onchange="toggleTrailSetting(this.checked)">
             <span class="switch-slider"></span>
           </label>
         </div>
@@ -1095,7 +1242,7 @@
         <div class="settings-toggle-row">
           <span>24-hour clock</span>
           <label class="switch">
-            <input type="checkbox" id="toggle24h" onchange="toggle24hSetting(this.checked)">
+            <input type="checkbox" id="toggle24h" autocomplete="off" onchange="toggle24hSetting(this.checked)">
             <span class="switch-slider"></span>
           </label>
         </div>
@@ -1106,7 +1253,7 @@
         <div class="settings-toggle-row">
           <span>Skip boot animation on login</span>
           <label class="switch">
-            <input type="checkbox" id="toggleSkipBoot" onchange="toggleSkipBootSetting(this.checked)">
+            <input type="checkbox" id="toggleSkipBoot" autocomplete="off" onchange="toggleSkipBootSetting(this.checked)">
             <span class="switch-slider"></span>
           </label>
         </div>
@@ -1119,8 +1266,39 @@
     </div>
   </div>
 
+  <!-- CHATROOM PANEL -->
+  <div class="h-panel-view" id="panel-chat">
+    <div class="h-panel-bar">
+      <button class="h-back-btn" onclick="goHome()">← BACK</button>
+      <span class="h-panel-title">◆ CHATROOM</span>
+      <span class="h-panel-sub" id="chatStatus">Connecting...</span>
+    </div>
+    <div class="h-panel-content" style="display:flex; flex-direction:column; height:100%; padding-bottom:1.2em; overflow:hidden;">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Type a message..." maxlength="500" autocomplete="off">
+        <button class="html-run" id="chatSendBtn" onclick="sendChatMessage()">SEND</button>
+      </div>
+    </div>
+  </div>
+
   <!-- GAME WEBSITES PANEL -->
   <div class="h-panel-view" id="panel-guides">
+  <div class="h-bg-grid"></div>
+  <div class="h-deco" style="top:11%;left:11%;animation-delay:1.8s;font-size:9px;">◆</div>
+  <div class="h-deco" style="bottom:16%;right:9%;animation-delay:3.9s;">◆</div>
+<div class="h-motes">
+      <span style="left:62.5%; width:4px; height:4px; animation-duration:11.3s; animation-delay:-11.9s;"></span>
+      <span style="left:16.0%; width:6px; height:6px; animation-duration:12.0s; animation-delay:-1.7s;"></span>
+      <span style="left:11.1%; width:4px; height:4px; animation-duration:15.2s; animation-delay:-17.3s;"></span>
+      <span style="left:24.6%; width:6px; height:6px; animation-duration:17.0s; animation-delay:-5.7s;"></span>
+      <span style="left:42.0%; width:3px; height:3px; animation-duration:15.5s; animation-delay:-11.9s;"></span>
+      <span style="left:73.6%; width:4px; height:4px; animation-duration:12.6s; animation-delay:-8.7s;"></span>
+      <span style="left:17.5%; width:3px; height:3px; animation-duration:20.6s; animation-delay:-10.6s;"></span>
+      <span style="left:38.3%; width:4px; height:4px; animation-duration:14.6s; animation-delay:-10.4s;"></span>
+      <span style="left:78.1%; width:5px; height:5px; animation-duration:18.3s; animation-delay:-6.2s;"></span>
+      <span style="left:10.3%; width:4px; height:4px; animation-duration:13.9s; animation-delay:-4.2s;"></span>
+    </div>
     <div class="h-panel-bar">
       <button class="h-back-btn" onclick="goHome()">← BACK</button>
       <span class="h-panel-title">◆ GAME WEBSITES</span>
@@ -1278,6 +1456,7 @@ function openPanel(id) {
   document.getElementById('hHome').style.display = 'none';
   document.querySelectorAll('.h-panel-view').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-' + id).classList.add('active');
+  if (id === 'chat') initChat();
 }
 function goHome() {
   document.querySelectorAll('.h-panel-view').forEach(p => p.classList.remove('active'));
@@ -1421,6 +1600,7 @@ function initBatteryWidget() {
 initBatteryWidget();
 
 let barTimer = null;
+let currentUser = null; // set on successful login, used as the chat display name
 
 function go() {
   document.removeEventListener('keydown', go);
@@ -1494,14 +1674,21 @@ function attemptLogin() {
 
   if (Object.prototype.hasOwnProperty.call(USERS, u) && USERS[u] === p) {
     errEl.textContent = '';
+    currentUser = u;
+    loadSettings(); // re-read from storage in case anything changed since page load
     document.getElementById('loginScreen').style.display = 'none';
     if (settings.skipBoot) {
       document.getElementById('loader').style.display = 'none';
       document.getElementById('hub').classList.add('active');
     } else {
       document.getElementById('loader').style.display = 'flex';
-      document.addEventListener('keydown', go);
-      document.addEventListener('click', go);
+      // deferred so the click/Enter keypress that submitted the login
+      // form (still bubbling to document right now) can't immediately
+      // re-trigger go() and skip straight past the boot animation
+      setTimeout(() => {
+        document.addEventListener('keydown', go);
+        document.addEventListener('click', go);
+      }, 0);
       runLoader();
     }
   } else {
@@ -1676,6 +1863,90 @@ function resetSettings() {
   saveSettings();
   applySettings();
 }
+
+/* ══════════════════════════════════════
+   CHATROOM
+   Replace firebaseConfig below with your own
+   project's config from the Firebase console
+   (Project Settings → Your apps → web app).
+═══════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCJDd-Elma5hocerc5YRnBw6IrvvTi0-Ok",
+  authDomain: "diamondhub-chat.firebaseapp.com",
+  databaseURL: "https://diamondhub-chat-default-rtdb.firebaseio.com",
+  projectId: "diamondhub-chat",
+};
+
+let chatDb = null;
+let chatInitialized = false;
+
+function initChat() {
+  if (chatInitialized) return;
+  chatInitialized = true;
+  const statusEl = document.getElementById('chatStatus');
+
+  if (firebaseConfig.apiKey === "YOUR_API_KEY") {
+    statusEl.textContent = 'Not connected — add your Firebase config in the code.';
+    return;
+  }
+
+  try {
+    firebase.initializeApp(firebaseConfig);
+    chatDb = firebase.database();
+    statusEl.textContent = 'Connected';
+
+    const messagesRef = chatDb.ref('messages').limitToLast(100);
+    messagesRef.on('child_added', (snap) => {
+      renderChatMessage(snap.val());
+    });
+  } catch (e) {
+    statusEl.textContent = 'Connection failed — check your Firebase config.';
+    console.error('Chat init error:', e);
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderChatMessage(msg) {
+  if (!msg || typeof msg.text !== 'string' || typeof msg.user !== 'string') return;
+  const container = document.getElementById('chatMessages');
+  const isOwn = msg.user === currentUser;
+  const time = msg.time ? new Date(msg.time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg' + (isOwn ? ' own' : '');
+  wrap.innerHTML =
+    `<div class="chat-meta"><span class="chat-user">${escapeHtml(msg.user)}</span> · ${escapeHtml(time)}</div>` +
+    `<div class="chat-bubble">${escapeHtml(msg.text)}</div>`;
+  container.appendChild(wrap);
+
+  const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 150;
+  if (nearBottom) container.scrollTop = container.scrollHeight;
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  if (!chatDb) {
+    document.getElementById('chatStatus').textContent = 'Not connected — add your Firebase config in the code.';
+    return;
+  }
+  chatDb.ref('messages').push({
+    user: currentUser || 'Unknown',
+    text: text.slice(0, 500),
+    time: Date.now(),
+  });
+  input.value = '';
+}
+
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendChatMessage();
+});
 
 loadSettings();
 applySettings();
