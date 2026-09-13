@@ -1041,7 +1041,7 @@
           <span class="la">→</span>
         </a>
 
-        <a class="link-row" href="http://storage.googleapis.com/luminacore/index.html" target="_blank" rel="noopener">
+        <a class="link-row" href="https://storage.googleapis.com/luminacore/index.html" target="_blank" rel="noopener">
           <span class="ld">◆</span>
           <span class="ln">BQC24</span>
           <span class="lu">storage.googleapis.com/luminacore/index.html</span>
@@ -1951,6 +1951,28 @@ function sendChatMessage() {
 document.getElementById('chatInput').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendChatMessage();
 });
+
+/* ── hide page when tab is inactive ── */
+(function () {
+  const hiddenElements = [
+    document.getElementById('loginScreen'),
+    document.getElementById('loader'),
+    document.getElementById('hub'),
+    document.getElementById('cursor-dot'),
+    document.getElementById('cursor-ring')
+  ];
+
+  function updateTabVisibility() {
+    const hidden = document.hidden;
+
+    hiddenElements.forEach(el => {
+      if (el) el.style.visibility = hidden ? 'hidden' : '';
+    });
+  }
+
+  document.addEventListener('visibilitychange', updateTabVisibility);
+  updateTabVisibility();
+})();
 
 loadSettings();
 applySettings();
